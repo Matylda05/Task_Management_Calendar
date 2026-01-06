@@ -1,0 +1,26 @@
+{
+  "name": "projekt_www_2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Matylda05/Projekt_www_2.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Matylda05/Projekt_www_2/issues"
+  },
+  "homepage": "https://github.com/Matylda05/Projekt_www_2#readme",
+  "dependencies": {
+    "express": "^5.2.1",
+    "sqlite3": "^5.1.7"
+  }
+}
