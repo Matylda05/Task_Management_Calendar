@@ -15,9 +15,9 @@ db.serialize(() => {
         Title VARCHAR(100) NOT NULL,
         Date DATE NOT NULL,
         Checked BOOLEAN DEFAULT 0,
-        Color VARCHAR(9),
+        Color VARCHAR(9) DEFAULT '#f9f9f9',
         Note TEXT
-        )
+        );
     `);
 });
 

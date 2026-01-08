@@ -15,6 +15,10 @@ body {
     --white: #ffffff;
     --font:'Courier New';
 }
+.linia {
+  width: 90%;
+  border: 1px dashed var(--main_brown);
+}
 
 .kalendarz_nav {
     justify-self: center;
@@ -69,4 +73,70 @@ body {
 ul {
     list-style: none;
     padding-left: 0;
+}
+
+.okno_edytuj_overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.okno_edytuj {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    width: 300px;
+}
+
+.okno_edytuj input {
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.okno_delete_overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.okno_delete {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    width: 300px;
+}
+
+.okno_delete input {
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.okno_add_overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.okno_add {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    width: 300px;
+}
+
+.okno_add input {
+    width: 100%;
+    margin-bottom: 10px;
 }

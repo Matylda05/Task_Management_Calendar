@@ -2,73 +2,210 @@ const calendarEl = document.getElementById('calendar');
 const monthYearEl = document.getElementById('monthYear');
 const month_nameEl = document.getElementById('month_name');
 const task_date = document.getElementById('task_date');
+const out = document.getElementById("taskList");
 
 const today = new Date();
 
 let currentYear = today.getFullYear();
 let currentMonth = today.getMonth(); 
 let currentDay = today.getDate();
-const today_date =`${currentYear}-${String(currentMonth).padStart(2, "0")}-${String(currentDay).padStart(2, "0")}`;
+const today_date = `${currentYear}-${String(currentMonth + 1).padStart(2, "0")}-${String(currentDay).padStart(2, "0")}`;
+let selectedDate = today_date;
 
 
-async function get_task(Date) { //async pozwala utworzyć await
-    if (!Date) return;
+async function get_task(Date_task) { //async pozwala utworzyć await
+    if (!Date_task) return;
 
-    const res = await fetch(`/tasks?Date=${Date}`);
-    const out = document.getElementById("taskList");
+    const res = await fetch(`/tasks?Date=${Date_task}`);
 
     if (!res.ok) {
         alert("Błąd: " + (await res.text()));
         return;
     }
     const Tasks = await res.json();
+    out.innerHTML = "";
+
     if (Tasks.length === 0){
-        out.textContent = `Brak zadań w dniu ${Date}!`;
+        out.textContent = `Brak zadań w dniu ${Date_task}!`;
         return;
     }
-    out.textContent = JSON.stringify(Tasks, null, 2);
 
-    out.innerHTML = "";
     Tasks.forEach(task => {
         const li = document.createElement("li");
-        li.textContent = task.Title;
-        li.style.backgroundColor = task.Color || "#ffff";
+        li.classList.add("task-item");
+        li.dataset.id = task.ID;
+        li.dataset.title = task.Title;
+        li.dataset.date = task.Date;
+        li.dataset.color = task.Color;
+        li.dataset.note = task.Note ?? "";
+        li.style.backgroundColor = task.Color || "#f9f9f9";
+
+        li.innerHTML = `
+            <div class="tasklistmain">
+                <input type="checkbox" class="task-check" ${task.Checked === 1 ? "checked" : ""}>
+                <span>${task.Title}</span>
+                <button class="menu-btn">⋮</button>
+            <div>
+            <hr class="linia">
+
+            <div class="task-menu" style="display:none">
+                <button class="edit">Edit</button>
+                <button class="delete">Delete</button>
+                <span class="note" id="note">${task.Note === null ? "Notatka:<br> brak" : `Notatka:<br> ${task.Note}`}</span>
+            </div>
+        `;
         out.appendChild(li);
     });
 }
 
-async function add_task() {
-    const Title = document.getElementById("Title_add").value;
-    const Date = document.getElementById("Date_add").value;
-    const Checked = document.getElementById("Checked_add").checked ? 1 : 0;
-    const Color = document.getElementById("Color_add").value;
-    const Note = document.getElementById("Note_add").value;
-
-    if (!Title || !Date) {
-        alert("Wpisz tytuł i date!");
-        return;
+out.addEventListener("click", (e) => {
+    if (e.target.classList.contains("menu-btn")) {
+        const taskItem = e.target.closest(".task-item");
+        const menu = taskItem.querySelector(".task-menu");
+        menu.style.display = menu.style.display === "none" ? "block" : "none";
     }
+});
 
-    const res = await fetch("/tasks", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({ Title, Date, Checked, Color, Note})
-    });
+out.addEventListener("change", (e) => {
+    if (!e.target.classList.contains("task-check")) return;
 
-    if (!res.ok) {
-        alert("Błąd: " + (await res.text()));
-        return;
-    }
-    alert("Zadanie dodane!");
-    document.getElementById("Title_add").value = "";
-    document.getElementById("Date_add").value = "";
-    document.getElementById("Checked_add").checked = false;
-    document.getElementById("Color_add").value = "";
-    document.getElementById("Note_add").value = "";
+    const li = e.target.closest(".task-item");
+    const id = Number(li.dataset.id);
+    const Checked = e.target.checked ? 1 : 0;
+    checked_task(id, Checked);
+
+    li.classList.toggle("done", Checked === 1);
+});
+
+out.addEventListener("click", (e) => {
+    if (!e.target.classList.contains("edit")) return;
+
+    const li = e.target.closest(".task-item");
+
+    const task = {
+        ID: li.dataset.id,
+        Title: li.dataset.title,
+        Date: li.dataset.date,
+        Color: li.dataset.color,
+        Note: li.dataset.note
+    };
+
+    okno_edytuj(task);
+});
+
+out.addEventListener("click", (e) => {
+    if (!e.target.classList.contains("delete")) return;
+    const li = e.target.closest(".task-item");
+    okno_delete(li.dataset.id);
+});
+
+function okno_edytuj(task) {
+    const old = document.querySelector(".okno_edytuj_overlay");
+    if (old) old.remove();
+
+    const overlay = document.createElement("div");
+    overlay.className = "okno_edytuj_overlay";
+
+    overlay.innerHTML = `
+        <div class="okno_edytuj">
+            <section>
+                <h2>Edytuj Zadanie</h2>
+
+                <span>Title: </span>
+                <input id="Title_edit" value="${task.Title}">
+                <span>Date: </span>
+                <input type="date" id="Date_edit" value="${task.Date}">
+                <span>Color: </span>
+                <input type="color" id="Color_edit" value="${task.Color === null ? "#f9f9f9" : task.Color}">
+                <span>Note: </span>
+                <input id="Note_edit" value="${task.Note}">
+
+                <div class="buttons">
+                    <button onclick="edit_task(${task.ID}); zamknij_okno_edytuj()">Save</button>
+                    <button onclick="zamknij_okno_edytuj()">Cancel</button>
+                </div>
+            </section>
+        </div>
+    `;
+
+    document.body.appendChild(overlay);
 }
 
-async function delete_task() {
-    const id = document.getElementById("id_delete").value;
+function okno_delete(id) {
+    const old = document.querySelector(".okno_delete_overlay");
+    if (old) old.remove();
+
+    const overlay = document.createElement("div");
+    overlay.className = "okno_delete_overlay";
+
+    overlay.innerHTML = `
+        <div class="okno_delete">
+            <section>
+                <h2>Are you sure you want to delete this task?</h2>
+
+                
+                <img src="images/important.png" alt="!">
+                <span>You can’t restore this task from the Recycle Bim!!!</span>
+
+                <div class="buttons">
+                    <button onclick="delete_task(${id}); zamknij_okno_delete()">Delete</button>
+                    <button onclick="zamknij_okno_delete()">Cancel</button>
+                </div>
+            </section>
+        </div>
+    `;
+
+    document.body.appendChild(overlay);
+}
+
+function okno_add() {
+    const old = document.querySelector(".okno_add_overlay");
+    if (old) old.remove();
+
+    const overlay = document.createElement("div");
+    overlay.className = "okno_add_overlay";
+
+    overlay.innerHTML = `
+        <div class="okno_add">
+            <section>
+                <h2>ADD TASK</h2>
+
+                <span>Title: </span>
+                <input id="Title_add" value="">
+                <span>Date: </span>
+                <input type="date" id="Date_add" value="${today_date}">
+                <span>Color: </span>
+                <input type="color" id="Color_add" value="${"#f9f9f9"}">
+                <span>Note: </span>
+                <input id="Note_add" value="">
+
+                <div class="buttons">
+                    <button onclick="add_task(); zamknij_okno_add()">ADD</button>
+                    <button onclick="zamknij_okno_add()">Cancel</button>
+                </div>
+            </section>
+        </div>
+    `;
+
+    document.body.appendChild(overlay);
+}
+
+function zamknij_okno_edytuj() {
+    const overlay = document.querySelector(".okno_edytuj_overlay");
+    if (overlay) overlay.remove();
+}
+
+function zamknij_okno_delete() {
+    const overlay = document.querySelector(".okno_delete_overlay");
+    if (overlay) overlay.remove();
+}
+
+function zamknij_okno_add() {
+    const overlay = document.querySelector(".okno_add_overlay");
+    if (overlay) overlay.remove();
+}
+
+async function delete_task(id) {
     if (!id) {
         alert("Podaj id!");
         return;
@@ -85,11 +222,10 @@ async function delete_task() {
     }
 
     alert("Zadanie usunięte!");
-    document.getElementById("id_delete").value = "";
+    get_task(selectedDate);
 }
 
-async function edit_task() {
-    const id = document.getElementById("id_edit").value;
+async function edit_task(id) {
     const Title = document.getElementById("Title_edit").value;
     const Date = document.getElementById("Date_edit").value;
     const Color = document.getElementById("Color_edit").value;
@@ -116,20 +252,36 @@ async function edit_task() {
     }
 
     alert("Zadanie edytowane!");
-    document.getElementById("id_edit").value = "";
-    document.getElementById("Title_edit").value = "";
-    document.getElementById("Date_edit").value = "";
-    document.getElementById("Color_edit").value = "";
-    document.getElementById("Note_edit").value = "";
+    get_task(selectedDate);
 }
 
-async function checked_task() {
-    const id = document.getElementById("id_checked").value;
-    const Checked = document.getElementById("Checked_checked").checked ? 1 : 0;
-    if (!id) {
-        alert("Podaj id!");
+async function add_task() {
+    const Title = document.getElementById("Title_add").value;
+    const Date = document.getElementById("Date_add").value;
+    const Color = document.getElementById("Color_add").value;
+    const Note = document.getElementById("Note_add").value;
+    if (!Title || !Date) {
+        alert("Wpisz tytuł i date!");
         return;
     }
+
+    const res = await fetch(`/tasks`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ Title, Date, Color, Note})
+    });
+
+    if (!res.ok) {
+        alert("Błąd: " + (await res.text()));
+        return;
+    }
+
+    alert("Zadanie Dodane!");
+    get_task(selectedDate);
+}
+
+async function checked_task(id, Checked) {
+
     const res = await fetch(`/tasks/${id}`, {
         method: "PUT",
         headers: {"Content-Type": "application/json"},
@@ -141,8 +293,6 @@ async function checked_task() {
     }
 
     alert("Zadanie wykonane!");
-    document.getElementById("id_checked").value = "";
-    document.getElementById("Checked_checked").checked = false;
 }
 
 function getMonthName(Index) {
@@ -179,11 +329,16 @@ function generateCalendar(month, year) {
 calendarEl.addEventListener('click', (e) => {
     const cell = e.target.closest('td[data-date]');
     if (!cell) return;
+
+    document.querySelectorAll('#calendar td.selected')
+    .forEach(td => td.classList.remove('selected'));
+
     cell.classList.add('selected');
     task_date.textContent = cell.dataset.date;
+    selectedDate = cell.dataset.date;
 
 
-    get_task(cell.dataset.date);
+    get_task(selectedDate);
 });
 
 
@@ -195,8 +350,6 @@ function PrevMonth() {
     }
     generateCalendar(currentMonth, currentYear);
 };
-
-
 function nextMonth() {
     currentMonth++;
     if (currentMonth > 11) {
@@ -205,5 +358,6 @@ function nextMonth() {
     }
     generateCalendar(currentMonth, currentYear);
 };
-get_task(today_date);
+
+get_task(selectedDate);
 generateCalendar(currentMonth, currentYear);

@@ -6,6 +6,10 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+<div class="menu">
+    <img src="images/important.png" alt="!">
+    <img id="menu" scr="images/menu.png" alt="menu">
+</div>
 <div class="kalendarz_nav">
         <button class="PrevMonth" onclick="PrevMonth()"></button>
         <h1 class="month_name" id="month_name"></h1>
@@ -14,15 +18,23 @@
 <h2 class="monthYear" id="monthYear"></h2>
 
 <div class="container">
-    <div class="task_list">
-        <h2>Task List</h2>
-        <p id="task_date"></p>
-        <ul id="taskList"></ul>
+    <div class="left_side">
+        <div class="task_list">
+            <span>Task List</span>
+            <span id="task_date"></span>
+            <ul id="taskList" class="task-list">
+            </ul>
+        </div>
+        <button class="add_button" onclick="okno_add()">ADD TASK</button>
     </div>
+
     <div class="kalendarz">
         <table id="calendar" ></table>
     </div>
 </div>
+
+
+
 <script src="script.js"></script>
 </body>
 </html>

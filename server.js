@@ -89,7 +89,6 @@ app.put("/tasks/:id", (req, res) => {
     });
 });
 
-
 app.delete("/tasks/:id", (req, res) => {
     const {id} = req.params;
     const sql = 'DELETE FROM task WHERE ID = ?';
