@@ -1,0 +1,72 @@
+body {
+    font-family: var(--font);   
+    padding-right: 0px;
+    padding-left: 0px;
+    padding-top: 1px;
+    padding-bottom: 1px;
+    background: var(--background);
+}
+:root {
+    --background: #f9f9f9;
+    --main_brown: #443d33;
+    --main_gray: #e6e6e6;
+    --red: #ad2715;
+    --light_red: #c48b87;
+    --white: #ffffff;
+    --font:'Courier New';
+}
+
+.kalendarz_nav {
+    justify-self: center;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 5px;
+    margin: 0px 5px;
+}
+.PrevMonth {
+    justify-self: right;
+    align-self: center;
+    width: 100px;
+    height: 90px;
+    background: var(--main_brown);
+    clip-path: polygon(100% 0%, 50% 0%, 0% 50%, 50% 100%, 100% 100%, 50% 50%);
+    cursor: pointer;
+}
+.month_name{
+    align-self: center;
+    text-align: center;
+    font-size: 70px;
+    font-weight: normal;
+    color: var(--main_brown);
+}
+.nextMonth{
+    justify-self: left;
+    align-self: center;
+    width: 100px;
+    height: 90px;
+    background: var(--main_brown);
+    clip-path: polygon(0% 0%, 50% 0%, 100% 50%, 50% 100%, 0% 100%, 50% 50%);
+    cursor: pointer;
+}
+.monthYear{
+    align-self: center;
+    text-align: center;
+    font-size: 40px;
+    transform: translateY(-80px);
+    font-weight: normal;
+    color: var(--main_brown);
+}
+
+.container {
+  display: flex;
+  flex-direction: row;
+  gap: 100px;
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-top: 100px;  
+}
+
+ul {
+    list-style: none;
+    padding-left: 0;
+}
