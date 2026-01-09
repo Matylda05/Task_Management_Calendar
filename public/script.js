@@ -13,7 +13,7 @@ const today_date = `${currentYear}-${String(currentMonth + 1).padStart(2, "0")}-
 let selectedDate = today_date;
 
 
-async function get_task(Date_task) { //async pozwala utworzyć await
+async function get_task(Date_task) {
     if (!Date_task) return;
 
     const res = await fetch(`/tasks?Date=${Date_task}`);
@@ -32,7 +32,7 @@ async function get_task(Date_task) { //async pozwala utworzyć await
 
     Tasks.forEach(task => {
         const li = document.createElement("li");
-        li.classList.add("task-item");
+        li.classList.add("task_item");
         li.dataset.id = task.ID;
         li.dataset.title = task.Title;
         li.dataset.date = task.Date;
@@ -44,32 +44,34 @@ async function get_task(Date_task) { //async pozwala utworzyć await
             <div class="tasklistmain">
                 <input type="checkbox" class="task-check" ${task.Checked === 1 ? "checked" : ""}>
                 <span>${task.Title}</span>
-                <button class="menu-btn">⋮</button>
+                <button class="menu_btn">⋮</button>
             <div>
             <hr class="linia">
 
-            <div class="task-menu" style="display:none">
+            <div class="task_menu" style="display:none">
+                <span class="note" id="note">${task.Note === null ? "Notatka:<br> brak <br>" : `Notatka:<br> ${task.Note} <br>`}</span>
                 <button class="edit">Edit</button>
                 <button class="delete">Delete</button>
-                <span class="note" id="note">${task.Note === null ? "Notatka:<br> brak" : `Notatka:<br> ${task.Note}`}</span>
             </div>
         `;
         out.appendChild(li);
     });
 }
 
+
 out.addEventListener("click", (e) => {
-    if (e.target.classList.contains("menu-btn")) {
-        const taskItem = e.target.closest(".task-item");
-        const menu = taskItem.querySelector(".task-menu");
-        menu.style.display = menu.style.display === "none" ? "block" : "none";
-    }
+    if (e.target.classList.contains("menu_btn")) { 
+        const taskItem = e.target.closest(".task_item"); 
+        const menu = taskItem.querySelector(".task_menu"); 
+        menu.style.display = menu.style.display === "none" ? "block" : "none"; 
+    } 
 });
+
 
 out.addEventListener("change", (e) => {
     if (!e.target.classList.contains("task-check")) return;
 
-    const li = e.target.closest(".task-item");
+    const li = e.target.closest(".task_item");
     const id = Number(li.dataset.id);
     const Checked = e.target.checked ? 1 : 0;
     checked_task(id, Checked);
@@ -80,7 +82,7 @@ out.addEventListener("change", (e) => {
 out.addEventListener("click", (e) => {
     if (!e.target.classList.contains("edit")) return;
 
-    const li = e.target.closest(".task-item");
+    const li = e.target.closest(".task_item");
 
     const task = {
         ID: li.dataset.id,
@@ -95,7 +97,7 @@ out.addEventListener("click", (e) => {
 
 out.addEventListener("click", (e) => {
     if (!e.target.classList.contains("delete")) return;
-    const li = e.target.closest(".task-item");
+    const li = e.target.closest(".task_item");
     okno_delete(li.dataset.id);
 });
 
@@ -309,7 +311,13 @@ function generateCalendar(month, year) {
     month_nameEl.textContent = getMonthName(month);
     
     let html = "<tr>";
-    days.forEach(day => html += `<th>${day}</th>`);
+     days.forEach((day, index) => {
+        if (index === 6) {
+            html += `<th class="sunday-header">${day}</th>`;
+        } else {
+            html += `<th>${day}</th>`;
+        }
+    });
     html += "</tr><tr>";
 
     let dayOfWeek = firstDay === 0 ? 6 : firstDay-1; 
@@ -317,7 +325,17 @@ function generateCalendar(month, year) {
 
     for (let day = 1; day <= daysInMonth; day++) {
         const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
-        html += `<td data-date="${dateStr}">${day}</td>`;
+        
+        let classes = "";
+        const weekdayIndex = (dayOfWeek) % 7; 
+        if (weekdayIndex === 6) { 
+            classes += " sunday";
+        }
+        if (dateStr === today_date) {
+            classes += " today";
+        }
+
+        html += `<td data-date="${dateStr}" class="${classes}">${day}</td>`;
         dayOfWeek++;
         if (dayOfWeek % 7 === 0 && day !== daysInMonth) html += "</tr><tr>";
     }
@@ -358,6 +376,55 @@ function nextMonth() {
     }
     generateCalendar(currentMonth, currentYear);
 };
+
+
+function okno_zmien() {
+    if (document.querySelector(".okno_zmien_overlay")) {
+        return;
+    }
+    const overlay = document.createElement("div");
+    overlay.className = "okno_zmien_overlay";
+
+    overlay.innerHTML = `
+        <div class="okno_zmien">
+            <section>
+                <button onclick="zamknij_okno_zmien()">close</button>
+                <label for="Change_year">Change year</label>
+                <input type="number" id="Change_year" name="Change_year" min="1900" max="2030" value="2026">
+                <label for="Change_month">Change year</label>
+                <select id="Change_month" name="Change_month">
+                    <option value="0">January</option>
+                    <option value="1">February</option>
+                    <option value="2">March</option>
+                    <option value="3">April</option>
+                    <option value="4">May</option>
+                    <option value="5">June</option>
+                    <option value="6">July</option>
+                    <option value="7">August</option>
+                    <option value="8">September</option>
+                    <option value="9">October</option>
+                    <option value="10">November</option>
+                    <option value="11">December</option>
+                </select>
+                <button id="saveBtn">Save</button>
+            </section>
+        </div>
+    `;
+    document.body.appendChild(overlay);
+
+    document.getElementById("saveBtn").addEventListener("click", () => {
+        const year = document.getElementById("Change_year").value;
+        const month = document.getElementById("Change_month").value;
+        generateCalendar(parseInt(month), parseInt(year));
+        zamknij_okno_zmien(); 
+    });
+}
+
+function zamknij_okno_zmien() {
+    const overlay = document.querySelector(".okno_zmien_overlay");
+    if (overlay) overlay.remove();
+}
+
 
 get_task(selectedDate);
 generateCalendar(currentMonth, currentYear);

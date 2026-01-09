@@ -26,6 +26,7 @@ body {
     grid-template-columns: repeat(3, 1fr);
     gap: 5px;
     margin: 0px 5px;
+    transform: translateY(-80px);
 }
 .PrevMonth {
     justify-self: right;
@@ -56,9 +57,21 @@ body {
     align-self: center;
     text-align: center;
     font-size: 40px;
-    transform: translateY(-80px);
+    transform: translateY(-160px);
     font-weight: normal;
     color: var(--main_brown);
+}
+
+.today {
+    color: var(--white);
+    background-color: var(--red);
+    font-weight: bold;
+}
+.sunday {
+    color: var(--red);
+}
+.sunday-header {
+    color: var(--red);
 }
 
 .container {
@@ -74,6 +87,7 @@ ul {
     list-style: none;
     padding-left: 0;
 }
+
 
 .okno_edytuj_overlay {
     position: fixed;
@@ -137,6 +151,39 @@ ul {
 }
 
 .okno_add input {
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.menu {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 0;
+    position: relative;
+    z-index: 1000;
+}
+
+
+
+.okno_zmien_overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.okno_zmien {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    width: 300px;
+}
+
+.okno_zmien input {
     width: 100%;
     margin-bottom: 10px;
 }
