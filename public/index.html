@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <title>Task List</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style_okna.css">
+    <link rel="stylesheet" href="style_btn.css">
 </head>
 <body>
 <button id="menuButton" class="menu" onclick="okno_zmien()">
@@ -18,18 +20,35 @@
 
 <div class="container">
     <div class="left_side">
-        <div class="task_list">
-            <span>Task List</span>
-            <span id="task_date"></span>
-            <ul id="taskList" class="task-list">
-            </ul>
+        <div class="ramka_task_list">
+            <div classs="header_task_list ">
+                <span class="napis_task_list">Task List</span>
+                <span class="napis_task_date" id="task_date"></span>
+            </div>
+            <div class="task_list">
+                <ul id="taskList" class="task-list">
+                </ul>
+            </div>
         </div>
-        <button class="add_button" onclick="okno_add()">ADD TASK</button>
+        <button class="button add_button" onclick="okno_add()">
+            <span>ADD TASK</span>
+            <img src="images/plus.png" alt="+">
+        </button>
     </div>
 
     <div class="kalendarz">
-        <table id="calendar" ></table>
+    <div class="weekdays">
+        <span>MONDAY</span>
+        <span>TUESDAY</span>
+        <span>WEDNESDAY</span>
+        <span>THURSDAY</span>
+        <span>FRIDAY</span>
+        <span>SATURDAY</span>
+        <span class="sunday-header">SUNDAY</span>
     </div>
+
+    <table id="calendar"></table>
+</div>
 </div>
 
 

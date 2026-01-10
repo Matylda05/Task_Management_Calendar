@@ -1,0 +1,134 @@
+
+
+
+.okno_edytuj_overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.okno_edytuj {
+    background: var(--main_gray);
+    border: 3px solid var(--main_brown);
+    padding: 20px;
+    border-radius: 12px;
+    width: 600px;
+}
+
+.okno_edytuj input {
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.color_picker {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.color_dot {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid transparent;
+}
+
+.color_dot:hover {
+    border-color: var(--main_brown);
+}
+
+.color_dot.active {
+    border-color: black;
+}
+
+.color_dot.none {
+    background: white;
+    position: relative;
+}
+
+.color_dot.none::after {
+    content: '';
+    position: absolute;
+    inset: 1px;
+    border: 3px solid red;
+    border-radius: 50%;
+}
+
+
+
+.okno_delete_overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.okno_delete {
+    background: var(--main_gray);
+    border: 3px solid var(--main_brown);
+    padding: 20px;
+    border-radius: 12px;
+    width: 300px;
+}
+
+.okno_delete input {
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+
+
+.okno_add_overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.okno_add {
+    background: var(--main_gray);
+    border: 3px solid var(--main_brown);
+    padding: 20px;
+    border-radius: 12px;
+    width: 600px;
+}
+
+.okno_add input {
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+
+
+.okno_zmien_overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    display: flex;
+    justify-content: left;
+    align-items: left;
+    z-index: 1000;
+}
+
+.okno_zmien {
+    background: var(--main_gray);
+    border: 3px solid var(--main_brown);
+    padding: 20px;
+    width: 300px;
+}
+
+.okno_zmien input {
+    width: 100%;
+    margin-bottom: 10px;
+}

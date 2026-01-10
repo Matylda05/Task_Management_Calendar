@@ -9,10 +9,11 @@ body {
 :root {
     --background: #f9f9f9;
     --main_brown: #443d33;
+    --main_brown_hovever: #2c2823;
     --main_gray: #e6e6e6;
     --red: #ad2715;
-    --light_red: #c48b87;
     --white: #ffffff;
+    --blue: #5DADE2;
     --font:'Courier New';
 }
 .linia {
@@ -26,7 +27,7 @@ body {
     grid-template-columns: repeat(3, 1fr);
     gap: 5px;
     margin: 0px 5px;
-    transform: translateY(-80px);
+    margin-top: -80px;
 }
 .PrevMonth {
     justify-self: right;
@@ -40,7 +41,7 @@ body {
 .month_name{
     align-self: center;
     text-align: center;
-    font-size: 70px;
+    font-size: 100px;
     font-weight: normal;
     color: var(--main_brown);
 }
@@ -57,30 +58,115 @@ body {
     align-self: center;
     text-align: center;
     font-size: 40px;
-    transform: translateY(-160px);
+    margin-top: -50px;
     font-weight: normal;
     color: var(--main_brown);
-}
-
-.today {
-    color: var(--white);
-    background-color: var(--red);
-    font-weight: bold;
-}
-.sunday {
-    color: var(--red);
-}
-.sunday-header {
-    color: var(--red);
 }
 
 .container {
   display: flex;
   flex-direction: row;
-  gap: 100px;
+  justify-content: center;
+  gap: 30px;
   margin-left: 20px;
-  margin-right: 20px;
-  margin-top: 100px;  
+  margin-right: 50px;
+  margin-top: 40px;  
+}
+
+.today .day-number {
+    background-color: var(--red);
+    color: var(--white);
+}
+.sunday .day-number {
+    background: var(--red);
+}
+.sunday-header {
+    color: var(--red);
+}
+
+.kalendarz { 
+    flex: 2;
+    width: 100%;
+    max-width: 1200px;
+}
+
+#calendar {
+    width: 100%;
+    border-collapse: collapse; /*łączy obramowania komórek, brak podwójnych linii */
+    table-layout: fixed; /*wszystkie kolumny mają równą szerokość*/
+}
+
+#calendar th, #calendar td {
+    border: 1px solid #999999;
+    height: 100px;
+    vertical-align: top;
+    padding: 8px;
+    position: relative;
+}
+.day-number {
+    display: inline-flex; /*zachowuje linie i elemęty w środku można centrować*/
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--main_brown);
+    color: var(--white);
+    font-size: 12px;
+    font-weight: bold;
+}
+#calendar td.selected {
+    outline: 5px solid var(--blue);
+    outline-offset: -5px;
+}
+.empty {
+    background: #f5f5f5;
+}
+.muted {
+    background: #cccccc;
+}
+#calendar td[data-date]:hover {
+    background-color: rgba(0,0,0,0.05);
+    cursor: pointer;
+}
+.weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+.left_side {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    padding: 5px;
+    width: 100%;
+    max-width: 400px;
+}
+
+.ramka_task_list{
+    border: 1px solid var(--main_brown);
+    padding: 10px;
+}
+.header_task_list {
+    display: flex;                   
+    justify-content: space-between;  
+    align-items: center;
+    margin-bottom: 10px;             
+}
+.napis_task_list{
+    font-size: 30px;
+    font-weight: bold;
+    text-align: left;
+    white-space: nowrap;
+}
+.napis_task_date{
+    font-size: 20px;
+    white-space: nowrap;
+    align-self: right;
 }
 
 ul {
@@ -88,102 +174,48 @@ ul {
     padding-left: 0;
 }
 
-
-.okno_edytuj_overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.4);
-    display: flex;
-    justify-content: center;
+.task_header {
+    display: grid;
+    grid-template-columns: 1fr 4fr 1fr;
     align-items: center;
-    z-index: 1000;
+}
+.task_header span{
+    font-size: 20px;
+    font-family: var(--font);
 }
 
-.okno_edytuj {
-    background: white;
-    padding: 20px;
-    border-radius: 12px;
-    width: 300px;
+.task_menu {
+    padding-top: 5px;
+    padding-right: 5px;
+    padding-bottom: 10px;
+    padding-left: 5px;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+    gap: 10px;
 }
-
-.okno_edytuj input {
-    width: 100%;
-    margin-bottom: 10px;
+.note_ramka {
+    border: 2px solid var(--main_brown);
+    border-radius: 5px;
+    background-color: var(--background);
+    font-family: var(--font);
+    width: 90%;
+    min-height: 20px;  
+    display: flex;  
+    align-items: top; 
+    text-align: left;
+    padding: 10px;
 }
-
-.okno_delete_overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.4);
+.task_menu_button{
     display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
-.okno_delete {
-    background: white;
-    padding: 20px;
-    border-radius: 12px;
-    width: 300px;
-}
-
-.okno_delete input {
-    width: 100%;
-    margin-bottom: 10px;
-}
-
-.okno_add_overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.4);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
-.okno_add {
-    background: white;
-    padding: 20px;
-    border-radius: 12px;
-    width: 300px;
-}
-
-.okno_add input {
-    width: 100%;
-    margin-bottom: 10px;
-}
-
-.menu {
-    border: none;
-    background: transparent;
-    cursor: pointer;
-    padding: 0;
-    position: relative;
-    z-index: 1000;
+    direction: row;
+    gap: 10px;
+    margin: 5px;
 }
 
 
-
-.okno_zmien_overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.4);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
-.okno_zmien {
-    background: white;
-    padding: 20px;
-    border-radius: 12px;
-    width: 300px;
-}
-
-.okno_zmien input {
-    width: 100%;
-    margin-bottom: 10px;
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
 }

@@ -1,0 +1,98 @@
+.button {
+    font-family: var(--font); 
+    font-size: 20px; 
+    color: var(--white);
+    background-color: var(--main_brown);
+    border-radius: 15px;
+    padding: 10px 20px 10px 20px;
+    border: none;
+    border: 2px solid var(--main_brown);
+    cursor: pointer;
+}
+button:hover {
+    background-color: var(--main_brown_hovever);
+}
+
+.button_cancel {
+    font-family: var(--font);  
+    color: var(--main_brown);
+    background-color: var(--main_gray);
+    border-radius: 15px;
+    padding: 10px 20px 10px 20px;
+    border: 2px solid var(--main_brown);
+    cursor: pointer;
+}
+.button_cancel:hover {
+    background-color: var(--main_brown_hovever);
+    color: var(--white);
+}
+
+.menu_btn{
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 0;
+    position: relative;
+    z-index: 1000;
+}
+.menu_btn:hover {
+    background: none;
+}
+.menu_btn img{
+    width: 10px;
+    height: 30px;
+}
+
+.menu {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 0;
+    position: relative;
+    z-index: 1000;
+}
+.menu:hover{
+    background-color: var(--background);
+}
+
+.task-check {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--main_brown);
+    border-radius: 7px;
+    background: var(--background);
+    cursor: pointer;
+    position: relative;
+}
+
+.task-check:checked {
+    background: var(--main_brown);
+}
+.task-check:checked::after {
+    content: "";
+    position: absolute;
+    left: 5px;
+    width: 6px;
+    height: 12px;
+    border: solid var(--white);
+    border-width: 0 2px 2px 0;
+    transform: rotate(35deg);
+}
+.add_button {
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+}
+.add_button span{
+    align-self: center;
+}
+
+.add_button img{
+    width: 60px;
+    height: 60px;
+    margin-left: auto;
+}

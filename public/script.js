@@ -42,16 +42,22 @@ async function get_task(Date_task) {
 
         li.innerHTML = `
             <div class="tasklistmain">
-                <input type="checkbox" class="task-check" ${task.Checked === 1 ? "checked" : ""}>
-                <span>${task.Title}</span>
-                <button class="menu_btn">⋮</button>
+                <div class="task_header">
+                    <input type="checkbox" class="task-check" ${task.Checked === 1 ? "checked" : ""}>
+                    <span>${task.Title}</span>
+                    <button class="menu_btn">
+                        <img src="images/dots.png" alt="⋮">
+                    </button>
+                </div>
             <div>
             <hr class="linia">
 
             <div class="task_menu" style="display:none">
-                <span class="note" id="note">${task.Note === null ? "Notatka:<br> brak <br>" : `Notatka:<br> ${task.Note} <br>`}</span>
-                <button class="edit">Edit</button>
-                <button class="delete">Delete</button>
+                <span class="note_ramka" id="note">${task.Note === null ? "NOTE:<br> brak <br>" : `Notatka:<br> ${task.Note} <br>`}</span>
+                <div class="task_menu_button">
+                    <button class="button edit">EDIT</button>
+                    <button class="button delete">DELETE</button>
+                <div>
             </div>
         `;
         out.appendChild(li);
@@ -60,11 +66,12 @@ async function get_task(Date_task) {
 
 
 out.addEventListener("click", (e) => {
-    if (e.target.classList.contains("menu_btn")) { 
-        const taskItem = e.target.closest(".task_item"); 
-        const menu = taskItem.querySelector(".task_menu"); 
-        menu.style.display = menu.style.display === "none" ? "block" : "none"; 
-    } 
+    const menuBtn = e.target.closest(".menu_btn");
+    if (!menuBtn) return;
+
+    const taskItem = menuBtn.closest(".task_item");
+    const menu = taskItem.querySelector(".task_menu");
+    menu.style.display = menu.style.display === "none" ? "block" : "none";
 });
 
 
@@ -118,20 +125,52 @@ function okno_edytuj(task) {
                 <span>Date: </span>
                 <input type="date" id="Date_edit" value="${task.Date}">
                 <span>Color: </span>
-                <input type="color" id="Color_edit" value="${task.Color === null ? "#f9f9f9" : task.Color}">
+                <div class="color_picker" id="Color_edit">
+                    <input type="hidden" id="Color_value_edit" value="${task.Color ?? '#f9f9f9'}">
+                    <div class="color_dot" data-color="#F5D76E"></div>
+                    <div class="color_dot" data-color="#F39C12"></div>
+                    <div class="color_dot" data-color="#C0392B"></div>
+                    <div class="color_dot" data-color="#E84393"></div>
+                    <div class="color_dot" data-color="#BB8FCE"></div>
+                    <div class="color_dot" data-color="#5DADE2"></div>
+                    <div class="color_dot" data-color="#58D68D"></div>
+                    <div class="color_dot none" data-color="#f9f9f9"></div>
+                </div>
                 <span>Note: </span>
                 <input id="Note_edit" value="${task.Note}">
 
                 <div class="buttons">
-                    <button onclick="edit_task(${task.ID}); zamknij_okno_edytuj()">Save</button>
-                    <button onclick="zamknij_okno_edytuj()">Cancel</button>
+                    <button class="button" onclick="edit_task(${task.ID}); zamknij_okno_edytuj()">SAVE</button>
+                    <button class="button_cancel" onclick="zamknij_okno_edytuj()">CANCEL</button>
                 </div>
             </section>
         </div>
     `;
 
     document.body.appendChild(overlay);
+
+    const dots = overlay.querySelectorAll('.color_dot');
+    const colorValue = overlay.querySelector('#Color_value_edit');
+
+    dots.forEach(dot => {
+        const color = dot.dataset.color;
+
+        if (color) {
+            dot.style.backgroundColor = color;
+        }
+
+        if (color === colorValue.value) {
+            dot.classList.add('active');
+        }
+
+        dot.addEventListener('click', () => {
+            dots.forEach(d => d.classList.remove('active'));
+            dot.classList.add('active');
+            colorValue.value = color;
+        });
+    });
 }
+
 
 function okno_delete(id) {
     const old = document.querySelector(".okno_delete_overlay");
@@ -150,8 +189,8 @@ function okno_delete(id) {
                 <span>You can’t restore this task from the Recycle Bim!!!</span>
 
                 <div class="buttons">
-                    <button onclick="delete_task(${id}); zamknij_okno_delete()">Delete</button>
-                    <button onclick="zamknij_okno_delete()">Cancel</button>
+                    <button class="button" onclick="delete_task(${id}); zamknij_okno_delete()">DELETE</button>
+                    <button class="button_cancel" onclick="zamknij_okno_delete()">CANCEL</button>
                 </div>
             </section>
         </div>
@@ -177,19 +216,50 @@ function okno_add() {
                 <span>Date: </span>
                 <input type="date" id="Date_add" value="${today_date}">
                 <span>Color: </span>
-                <input type="color" id="Color_add" value="${"#f9f9f9"}">
+                <div class="color_picker" id="Color_edit">
+                    <input type="hidden" id="Color_value_add" value="${'#f9f9f9'}">
+                    <div class="color_dot" data-color="#F5D76E"></div>
+                    <div class="color_dot" data-color="#F39C12"></div>
+                    <div class="color_dot" data-color="#C0392B"></div>
+                    <div class="color_dot" data-color="#E84393"></div>
+                    <div class="color_dot" data-color="#BB8FCE"></div>
+                    <div class="color_dot" data-color="#5DADE2"></div>
+                    <div class="color_dot" data-color="#58D68D"></div>
+                    <div class="color_dot none" data-color="#f9f9f9"></div>
+                </div>
                 <span>Note: </span>
                 <input id="Note_add" value="">
 
                 <div class="buttons">
-                    <button onclick="add_task(); zamknij_okno_add()">ADD</button>
-                    <button onclick="zamknij_okno_add()">Cancel</button>
+                    <button class="button" onclick="add_task(); zamknij_okno_add()">ADD</button>
+                    <button class="button_cancel" onclick="zamknij_okno_add()">CANCEL</button>
                 </div>
             </section>
         </div>
     `;
 
     document.body.appendChild(overlay);
+
+    const dots = overlay.querySelectorAll('.color_dot');
+    const colorValue = overlay.querySelector('#Color_value_add');
+
+    dots.forEach(dot => {
+        const color = dot.dataset.color;
+
+        if (color) {
+            dot.style.backgroundColor = color;
+        }
+
+        if (color === colorValue.value) {
+            dot.classList.add('active');
+        }
+
+        dot.addEventListener('click', () => {
+            dots.forEach(d => d.classList.remove('active'));
+            dot.classList.add('active');
+            colorValue.value = color;
+        });
+    });
 }
 
 function zamknij_okno_edytuj() {
@@ -223,14 +293,13 @@ async function delete_task(id) {
         return;
     }
 
-    alert("Zadanie usunięte!");
     get_task(selectedDate);
 }
 
 async function edit_task(id) {
     const Title = document.getElementById("Title_edit").value;
     const Date = document.getElementById("Date_edit").value;
-    const Color = document.getElementById("Color_edit").value;
+    const Color = document.getElementById('Color_value_edit').value
     const Note = document.getElementById("Note_edit").value;
     if (!id) {
         alert("Podaj id!");
@@ -253,14 +322,13 @@ async function edit_task(id) {
         return;
     }
 
-    alert("Zadanie edytowane!");
     get_task(selectedDate);
 }
 
 async function add_task() {
     const Title = document.getElementById("Title_add").value;
     const Date = document.getElementById("Date_add").value;
-    const Color = document.getElementById("Color_add").value;
+    const Color = document.getElementById("Color_value_add").value;
     const Note = document.getElementById("Note_add").value;
     if (!Title || !Date) {
         alert("Wpisz tytuł i date!");
@@ -278,7 +346,6 @@ async function add_task() {
         return;
     }
 
-    alert("Zadanie Dodane!");
     get_task(selectedDate);
 }
 
@@ -294,7 +361,6 @@ async function checked_task(id, Checked) {
         return;
     }
 
-    alert("Zadanie wykonane!");
 }
 
 function getMonthName(Index) {
@@ -303,7 +369,6 @@ function getMonthName(Index) {
 }
 
 function generateCalendar(month, year) {
-    const days = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"];
     const firstDay = new Date(year, month, 1).getDay();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
 
@@ -311,17 +376,11 @@ function generateCalendar(month, year) {
     month_nameEl.textContent = getMonthName(month);
     
     let html = "<tr>";
-     days.forEach((day, index) => {
-        if (index === 6) {
-            html += `<th class="sunday-header">${day}</th>`;
-        } else {
-            html += `<th>${day}</th>`;
-        }
-    });
-    html += "</tr><tr>";
 
     let dayOfWeek = firstDay === 0 ? 6 : firstDay-1; 
-    for (let i = 0; i < dayOfWeek; i++) html += "<td></td>";
+    for (let i = 0; i < dayOfWeek; i++) {
+        html += `<td class="empty"><span class="day-number muted"></span></td>`;
+    }
 
     for (let day = 1; day <= daysInMonth; day++) {
         const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
@@ -335,12 +394,20 @@ function generateCalendar(month, year) {
             classes += " today";
         }
 
-        html += `<td data-date="${dateStr}" class="${classes}">${day}</td>`;
+        html += `
+            <td data-date="${dateStr}" class="${classes}">
+                <span class="day-number">${day}</span>
+            </td>
+            `;
         dayOfWeek++;
         if (dayOfWeek % 7 === 0 && day !== daysInMonth) html += "</tr><tr>";
     }
-    html += "</tr>";
+    const remaining = (7 - (dayOfWeek % 7)) % 7;
+    for (let i = 0; i < remaining; i++) {
+        html += `<td class="empty"><span class="day-number muted"></span></td>`;
+    }
 
+    html += "</tr>";
     calendarEl.innerHTML = html;
 }
 
@@ -388,10 +455,9 @@ function okno_zmien() {
     overlay.innerHTML = `
         <div class="okno_zmien">
             <section>
-                <button onclick="zamknij_okno_zmien()">close</button>
                 <label for="Change_year">Change year</label>
                 <input type="number" id="Change_year" name="Change_year" min="1900" max="2030" value="2026">
-                <label for="Change_month">Change year</label>
+                <label for="Change_month">Change month</label>
                 <select id="Change_month" name="Change_month">
                     <option value="0">January</option>
                     <option value="1">February</option>
@@ -406,7 +472,10 @@ function okno_zmien() {
                     <option value="10">November</option>
                     <option value="11">December</option>
                 </select>
-                <button id="saveBtn">Save</button>
+                <div class="zmien_buttons">
+                <button class="button" id="saveBtn">SAVE</button>
+                <button class="button_cancel" onclick="zamknij_okno_zmien()">CLOSE</button>
+                </div>
             </section>
         </div>
     `;
