@@ -74,8 +74,7 @@ body {
 }
 
 .today .day-number {
-    background-color: var(--red);
-    color: var(--white);
+    outline: 5px solid var(--blue);
 }
 .sunday .day-number {
     background: var(--red);
@@ -122,8 +121,8 @@ body {
 .empty {
     background: #f5f5f5;
 }
-.muted {
-    background: #cccccc;
+.pozostale {
+    background: var(--main_gray);
 }
 #calendar td[data-date]:hover {
     background-color: rgba(0,0,0,0.05);
@@ -180,7 +179,7 @@ ul {
     align-items: center;
 }
 .task_header span{
-    font-size: 20px;
+    font-size: 25px;
     font-family: var(--font);
 }
 
@@ -195,22 +194,26 @@ ul {
     gap: 10px;
 }
 .note_ramka {
+    resize: none;
     border: 2px solid var(--main_brown);
     border-radius: 5px;
     background-color: var(--background);
     font-family: var(--font);
-    width: 90%;
-    min-height: 20px;  
-    display: flex;  
-    align-items: top; 
+    font-size: 20px;
+    width: 90%; 
     text-align: left;
-    padding: 10px;
+    padding: 5px;
 }
 .task_menu_button{
     display: flex;
     direction: row;
     gap: 10px;
     margin: 5px;
+}
+.title_tasklistmain{
+    display: inline-block;
+    max-width: 13ch;
+    overflow-wrap: break-word;
 }
 
 

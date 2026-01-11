@@ -44,7 +44,7 @@ async function get_task(Date_task) {
             <div class="tasklistmain">
                 <div class="task_header">
                     <input type="checkbox" class="task-check" ${task.Checked === 1 ? "checked" : ""}>
-                    <span>${task.Title}</span>
+                    <span class="title_tasklistmain">${task.Title}</span>
                     <button class="menu_btn">
                         <img src="images/dots.png" alt="⋮">
                     </button>
@@ -53,7 +53,7 @@ async function get_task(Date_task) {
             <hr class="linia">
 
             <div class="task_menu" style="display:none">
-                <span class="note_ramka" id="note">${task.Note === null ? "NOTE:<br> brak <br>" : `Notatka:<br> ${task.Note} <br>`}</span>
+                <textarea readonly class="note_ramka" id="note"rows="4">${task.Note === "" ? "NOTE: brak " : `NOTE: ${task.Note}`}</textarea>
                 <div class="task_menu_button">
                     <button class="button edit">EDIT</button>
                     <button class="button delete">DELETE</button>
@@ -109,17 +109,16 @@ out.addEventListener("click", (e) => {
 });
 
 function okno_edytuj(task) {
-    const old = document.querySelector(".okno_edytuj_overlay");
+    const old = document.querySelector(".okno_overlay");
     if (old) old.remove();
 
     const overlay = document.createElement("div");
-    overlay.className = "okno_edytuj_overlay";
+    overlay.className = "okno_overlay";
 
     overlay.innerHTML = `
         <div class="okno_edytuj">
-            <section>
-                <h2>Edytuj Zadanie</h2>
-
+            <h2>EDIT TASK</h2>
+            <div class="okno_edytuj_inside">
                 <span>Title: </span>
                 <input id="Title_edit" value="${task.Title}">
                 <span>Date: </span>
@@ -137,13 +136,12 @@ function okno_edytuj(task) {
                     <div class="color_dot none" data-color="#f9f9f9"></div>
                 </div>
                 <span>Note: </span>
-                <input id="Note_edit" value="${task.Note}">
-
-                <div class="buttons">
-                    <button class="button" onclick="edit_task(${task.ID}); zamknij_okno_edytuj()">SAVE</button>
+                <textarea id="Note_edit" rows="4">${task.Note}</textarea>
+            </div>
+            <div class="buttons">
                     <button class="button_cancel" onclick="zamknij_okno_edytuj()">CANCEL</button>
-                </div>
-            </section>
+                    <button class="button" onclick="edit_task(${task.ID}); zamknij_okno_edytuj()">SAVE</button>
+            </div>
         </div>
     `;
 
@@ -173,11 +171,11 @@ function okno_edytuj(task) {
 
 
 function okno_delete(id) {
-    const old = document.querySelector(".okno_delete_overlay");
+    const old = document.querySelector(".okno_overlay");
     if (old) old.remove();
 
     const overlay = document.createElement("div");
-    overlay.className = "okno_delete_overlay";
+    overlay.className = "okno_overlay";
 
     overlay.innerHTML = `
         <div class="okno_delete">
@@ -200,17 +198,16 @@ function okno_delete(id) {
 }
 
 function okno_add() {
-    const old = document.querySelector(".okno_add_overlay");
+    const old = document.querySelector(".okno_overlay");
     if (old) old.remove();
 
     const overlay = document.createElement("div");
-    overlay.className = "okno_add_overlay";
+    overlay.className = "okno_overlay";
 
     overlay.innerHTML = `
         <div class="okno_add">
-            <section>
-                <h2>ADD TASK</h2>
-
+            <h2>ADD TASK</h2>
+            <div class="okno_add_inside">
                 <span>Title: </span>
                 <input id="Title_add" value="">
                 <span>Date: </span>
@@ -228,13 +225,12 @@ function okno_add() {
                     <div class="color_dot none" data-color="#f9f9f9"></div>
                 </div>
                 <span>Note: </span>
-                <input id="Note_add" value="">
-
-                <div class="buttons">
-                    <button class="button" onclick="add_task(); zamknij_okno_add()">ADD</button>
-                    <button class="button_cancel" onclick="zamknij_okno_add()">CANCEL</button>
-                </div>
-            </section>
+                <textarea id="Note_add" value=""></textarea>
+            </div>
+            <div class="buttons">
+                <button class="button_cancel" onclick="zamknij_okno_add()">CANCEL</button>
+                <button class="button" onclick="add_task(); zamknij_okno_add()">ADD</button>
+            </div>
         </div>
     `;
 
@@ -263,17 +259,17 @@ function okno_add() {
 }
 
 function zamknij_okno_edytuj() {
-    const overlay = document.querySelector(".okno_edytuj_overlay");
+    const overlay = document.querySelector(".okno_overlay");
     if (overlay) overlay.remove();
 }
 
 function zamknij_okno_delete() {
-    const overlay = document.querySelector(".okno_delete_overlay");
+    const overlay = document.querySelector(".okno_overlay");
     if (overlay) overlay.remove();
 }
 
 function zamknij_okno_add() {
-    const overlay = document.querySelector(".okno_add_overlay");
+    const overlay = document.querySelector(".okno_overlay");
     if (overlay) overlay.remove();
 }
 
@@ -379,7 +375,7 @@ function generateCalendar(month, year) {
 
     let dayOfWeek = firstDay === 0 ? 6 : firstDay-1; 
     for (let i = 0; i < dayOfWeek; i++) {
-        html += `<td class="empty"><span class="day-number muted"></span></td>`;
+        html += `<td class="empty"><span class="day-number pozostale"></span></td>`;
     }
 
     for (let day = 1; day <= daysInMonth; day++) {
@@ -404,7 +400,7 @@ function generateCalendar(month, year) {
     }
     const remaining = (7 - (dayOfWeek % 7)) % 7;
     for (let i = 0; i < remaining; i++) {
-        html += `<td class="empty"><span class="day-number muted"></span></td>`;
+        html += `<td class="empty"><span class="day-number pozostale"></span></td>`;
     }
 
     html += "</tr>";
