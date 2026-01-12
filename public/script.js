@@ -11,6 +11,7 @@ let currentMonth = today.getMonth();
 let currentDay = today.getDate();
 const today_date = `${currentYear}-${String(currentMonth + 1).padStart(2, "0")}-${String(currentDay).padStart(2, "0")}`;
 let selectedDate = today_date;
+let temporaryYear = currentYear;
 
 
 async function get_task(Date_task) {
@@ -179,18 +180,16 @@ function okno_delete(id) {
 
     overlay.innerHTML = `
         <div class="okno_delete">
-            <section>
-                <h2>Are you sure you want to delete this task?</h2>
+            <h2>Are you sure you want to delete this task?</h2>
 
-                
+            <div class="okno_delete_inside">
                 <img src="images/important.png" alt="!">
                 <span>You can’t restore this task from the Recycle Bim!!!</span>
-
-                <div class="buttons">
-                    <button class="button" onclick="delete_task(${id}); zamknij_okno_delete()">DELETE</button>
-                    <button class="button_cancel" onclick="zamknij_okno_delete()">CANCEL</button>
-                </div>
-            </section>
+            </div>
+            <div class="buttons">
+                <button class="button_cancel" onclick="zamknij_okno_delete()">CANCEL</button>
+                <button class="button" onclick="delete_task(${id}); zamknij_okno_delete()">DELETE</button>
+            </div>
         </div>
     `;
 
@@ -442,17 +441,22 @@ function nextMonth() {
 
 
 function okno_zmien() {
-    if (document.querySelector(".okno_zmien_overlay")) {
-        return;
-    }
+    if (document.querySelector(".okno_zmien_overlay")) return;
+
     const overlay = document.createElement("div");
     overlay.className = "okno_zmien_overlay";
+    temporaryYear = currentYear;
 
     overlay.innerHTML = `
         <div class="okno_zmien">
-            <section>
+            <form class="okno_zmien_form">
                 <label for="Change_year">Change year</label>
-                <input type="number" id="Change_year" name="Change_year" min="1900" max="2030" value="2026">
+                <div class="Change_year_line">
+                    <button type="button" class="mini_PrevYear" onclick="PrevYear()">-</button>
+                    <input type="text" id="Change_year" value="${temporaryYear}" pattern="\d*" maxlength="4">
+                    <button type="button" class="mini_nextYear" onclick="nextYear()">+</button>
+                </div>
+                <hr class="linia2">
                 <label for="Change_month">Change month</label>
                 <select id="Change_month" name="Change_month">
                     <option value="0">January</option>
@@ -468,28 +472,40 @@ function okno_zmien() {
                     <option value="10">November</option>
                     <option value="11">December</option>
                 </select>
-                <div class="zmien_buttons">
-                <button class="button" id="saveBtn">SAVE</button>
-                <button class="button_cancel" onclick="zamknij_okno_zmien()">CLOSE</button>
+                <hr class="linia2">
+                <div class="buttons">
+                    <button type="button" class="button_cancel" onclick="zamknij_okno_zmien()">CLOSE</button>
+                    <button type="submit" class="button" id="saveBtn">SAVE</button>
                 </div>
-            </section>
+            </form>
+            <button class="button add_button" onclick="okno_add()">
+                <span>ADD TASK</span>
+                <img src="images/plus.png" alt="+">
+            </button>
         </div>
     `;
     document.body.appendChild(overlay);
 
-    document.getElementById("saveBtn").addEventListener("click", () => {
-        const year = document.getElementById("Change_year").value;
-        const month = document.getElementById("Change_month").value;
-        generateCalendar(parseInt(month), parseInt(year));
+    document.getElementById("saveBtn").addEventListener("click", (e) => {
+        e.preventDefault();
+        currentYear = parseInt(document.getElementById("Change_year").value);
+        currentMonth = parseInt(document.getElementById("Change_month").value);
+        generateCalendar(currentMonth, currentYear);
         zamknij_okno_zmien(); 
     });
 }
-
+function PrevYear() {
+    temporaryYear--;
+    document.getElementById("Change_year").value = temporaryYear;
+}
+function nextYear() {
+    temporaryYear++;
+    document.getElementById("Change_year").value = temporaryYear;
+}
 function zamknij_okno_zmien() {
     const overlay = document.querySelector(".okno_zmien_overlay");
     if (overlay) overlay.remove();
 }
-
 
 get_task(selectedDate);
 generateCalendar(currentMonth, currentYear);

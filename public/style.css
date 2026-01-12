@@ -20,6 +20,10 @@ body {
   width: 90%;
   border: 1px dashed var(--main_brown);
 }
+.linia2 {
+  width: 100%;
+  border: 1px solid var(--main_brown);
+}
 
 .kalendarz_nav {
     justify-self: center;
@@ -79,7 +83,7 @@ body {
 .sunday .day-number {
     background: var(--red);
 }
-.sunday-header {
+.sunday_header {
     color: var(--red);
 }
 
@@ -217,8 +221,15 @@ ul {
 }
 
 
-@media (max-width: 768px) {
+@media (max-width: 900px) {
   .container {
     flex-direction: column;
+    flex-direction: column-reverse;
+  }
+  .kalendarz_nav{
+    transform: scale(0.75);
+  }
+  .weekdays span{
+    font-size: 15px;
   }
 }
