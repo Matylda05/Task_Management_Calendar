@@ -228,7 +228,7 @@ function okno_add() {
             </div>
             <div class="buttons">
                 <button class="button_cancel" onclick="zamknij_okno_add()">CANCEL</button>
-                <button class="button" onclick="add_task(); zamknij_okno_add()">ADD</button>
+                <button class="button" onclick="add_task(); zamknij_okno_add(); zamknij_okno_zmien()">ADD</button>
             </div>
         </div>
     `;
