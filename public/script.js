@@ -14,6 +14,7 @@ let selectedDate = today_date;
 let temporaryYear = currentYear;
 
 
+
 async function get_task(Date_task) {
     if (!Date_task) return;
 
@@ -83,8 +84,6 @@ out.addEventListener("change", (e) => {
     const id = Number(li.dataset.id);
     const Checked = e.target.checked ? 1 : 0;
     checked_task(id, Checked);
-
-    li.classList.toggle("done", Checked === 1);
 });
 
 out.addEventListener("click", (e) => {
@@ -228,7 +227,7 @@ function okno_add() {
             </div>
             <div class="buttons">
                 <button class="button_cancel" onclick="zamknij_okno_add()">CANCEL</button>
-                <button class="button" onclick="add_task(); zamknij_okno_add(); zamknij_okno_zmien()">ADD</button>
+                <button class="button" onclick="add_task()">ADD</button>
             </div>
         </div>
     `;
@@ -289,9 +288,19 @@ async function delete_task(id) {
     }
 
     get_task(selectedDate);
+    powiadomienie("Zadanie Usunięte!!!");
 }
 
 async function edit_task(id) {
+    const li = document.querySelector(`.task_item[data-id="${id}"]`);
+
+    const original = {
+        Title: li.dataset.title,
+        Date: li.dataset.date,
+        Color: li.dataset.color,
+        Note: li.dataset.note
+    };
+
     const Title = document.getElementById("Title_edit").value;
     const Date = document.getElementById("Date_edit").value;
     const Color = document.getElementById('Color_value_edit').value
@@ -301,10 +310,15 @@ async function edit_task(id) {
         return;
     }
     const body = {};
-    if (Title) body.Title = Title;
-    if (Date) body.Date = Date;
-    if (Color) body.Color = Color;
-    if (Note) body.Note = Note;
+    if (Title !== original.Title) body.Title = Title;
+    if (Date !== original.Date) body.Date = Date;
+    if (Color !== original.Color) body.Color = Color;
+    if (Note !== original.Note) body.Note = Note;
+
+    if (Object.keys(body).length === 0) {
+        powiadomienie("Nie wprowadzono żadnych zmian");
+        return;
+    }
 
     const res = await fetch(`/tasks/${id}`, {
         method: "PUT",
@@ -318,6 +332,7 @@ async function edit_task(id) {
     }
 
     get_task(selectedDate);
+    powiadomienie("Zadanie Edytowane!!!");
 }
 
 async function add_task() {
@@ -342,6 +357,8 @@ async function add_task() {
     }
 
     get_task(selectedDate);
+    zamknij_okno_add(); zamknij_okno_zmien();
+    powiadomienie("Zadanie Dodane!!!");
 }
 
 async function checked_task(id, Checked) {
@@ -355,7 +372,11 @@ async function checked_task(id, Checked) {
         alert("Błąd: " + (await res.text()));
         return;
     }
-
+    if(Checked === 1){
+        powiadomienie("Zadanie Wykonane!!!");
+    }else{
+        powiadomienie("Odznaczono zadanie");
+    }
 }
 
 function getMonthName(Index) {
@@ -449,12 +470,15 @@ function okno_zmien() {
 
     overlay.innerHTML = `
         <div class="okno_zmien">
+        <button type="button" class="menu_close" onclick="zamknij_okno_zmien()" style="margin-left:85%;">
+            <img src="images/cross.png" alt="x">
+        </button>
             <form class="okno_zmien_form">
                 <label for="Change_year">Change year</label>
                 <div class="Change_year_line">
                     <button type="button" class="mini_PrevYear" onclick="PrevYear()">-</button>
                     <input type="text" id="Change_year" value="${temporaryYear}" pattern="\d*" maxlength="4">
-                    <button type="button" class="mini_nextYear" onclick="nextYear()">+</button>
+                    <button type="button" class="mini_nextYear" onclick="nextYear()" >+</button>
                 </div>
                 <hr class="linia2">
                 <label for="Change_month">Change month</label>
@@ -474,7 +498,6 @@ function okno_zmien() {
                 </select>
                 <hr class="linia2">
                 <div class="buttons">
-                    <button type="button" class="button_cancel" onclick="zamknij_okno_zmien()">CLOSE</button>
                     <button type="submit" class="button" id="saveBtn">SAVE</button>
                 </div>
             </form>
@@ -491,7 +514,8 @@ function okno_zmien() {
         currentYear = parseInt(document.getElementById("Change_year").value);
         currentMonth = parseInt(document.getElementById("Change_month").value);
         generateCalendar(currentMonth, currentYear);
-        zamknij_okno_zmien(); 
+        zamknij_okno_zmien();
+        powiadomienie("Zmieniono strone kalendarza"); 
     });
 }
 function PrevYear() {
@@ -505,6 +529,25 @@ function nextYear() {
 function zamknij_okno_zmien() {
     const overlay = document.querySelector(".okno_zmien_overlay");
     if (overlay) overlay.remove();
+}
+
+function powiadomienie(text_powiadomienia){
+    const old = document.querySelector(".okno_overlay_powiadomienie");
+    if (old) old.remove();
+
+    const overlay = document.createElement("div");
+    overlay.className = "okno_overlay_powiadomienie";
+
+    overlay.innerHTML = `
+        <div class="okno_powiadomienie">
+            <span>${text_powiadomienia}</span>
+        </div>
+    `;
+
+    document.body.appendChild(overlay);
+    setTimeout(() => {
+        overlay.remove();
+    }, 3000);
 }
 
 get_task(selectedDate);

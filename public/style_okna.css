@@ -244,7 +244,7 @@
     border-radius: 8px;
 }
 .okno_zmien .buttons {
-    margin-left: 35%;
+    margin-left: 65%;
     margin-top: 5%;
 }
 .okno_zmien .add_button{
@@ -253,3 +253,34 @@
     width: 100%;
 }
 
+
+.okno_overlay_powiadomienie {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999;
+    animation: slideIn 0.3s ease-out forwards;
+}
+
+.okno_powiadomienie {
+    background-color: var(--red);
+    color: var(--white);
+    padding: 14px 20px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: bold;
+    max-width: 320px;
+    word-wrap: break-word;
+}
+
+
+@keyframes slideIn {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}

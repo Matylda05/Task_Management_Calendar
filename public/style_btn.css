@@ -21,6 +21,7 @@ button:hover {
     padding: 10px 20px 10px 20px;
     border: 2px solid var(--main_brown);
     cursor: pointer;
+    max-width: 100px;
 }
 .button_cancel:hover {
     background-color: var(--main_brown_hovever);
@@ -95,4 +96,22 @@ button:hover {
     width: 60px;
     height: 60px;
     margin-left: auto;
+}
+
+.menu_close {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 0;
+    position: relative;
+    z-index: 1000;
+    width: 35px;
+    height: 35px;
+}
+.menu_close img{
+    width: 30px;
+    height: 30px;
+}
+.menu_close:hover{
+    background-color: var(--main_gray);
 }
