@@ -209,7 +209,7 @@ function okno_add() {
                 <span>Title: </span>
                 <input id="Title_add" value="">
                 <span>Date: </span>
-                <input type="date" id="Date_add" value="${today_date}">
+                <input type="date" id="Date_add" value="${selectedDate}">
                 <span>Color: </span>
                 <div class="color_picker" id="Color_edit">
                     <input type="hidden" id="Color_value_add" value="${'#f9f9f9'}">
@@ -477,7 +477,7 @@ function okno_zmien() {
                 <label for="Change_year">Change year</label>
                 <div class="Change_year_line">
                     <button type="button" class="mini_PrevYear" onclick="PrevYear()">-</button>
-                    <input type="text" id="Change_year" value="${temporaryYear}" pattern="\d*" maxlength="4">
+                    <input type="text" id="Change_year"  value="${temporaryYear}" maxlength="4" inputmode="numeric">
                     <button type="button" class="mini_nextYear" onclick="nextYear()" >+</button>
                 </div>
                 <hr class="linia2">
@@ -517,7 +517,13 @@ function okno_zmien() {
         zamknij_okno_zmien();
         powiadomienie("Zmieniono strone kalendarza"); 
     });
+
+    
+    document.getElementById("Change_year").addEventListener("input", function () {
+        this.value = this.value.replace(/\D/g, '');
+    });
 }
+
 function PrevYear() {
     temporaryYear--;
     document.getElementById("Change_year").value = temporaryYear;

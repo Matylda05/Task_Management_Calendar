@@ -87,6 +87,8 @@ button:hover {
     display: flex;
     flex-direction: row;
     gap: 30px;
+    font-size: 24px;
+
 }
 .add_button span{
     align-self: center;

@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const express = require('express');
 const path = require('path');
 const db = require('./db');
@@ -11,7 +13,12 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.get('/tasks', (req, res) => {
     const { Date} = req.query;
-    const sql = 'SELECT * FROM task WHERE Date = ?'; 
+    const sql = `
+        SELECT t.ID, t.Title, t.Date, t.Checked, d.Color, d.Note
+        FROM task t
+        LEFT JOIN task_details d ON t.ID = d.TaskID
+        WHERE t.Date = ?
+        `;
     db.all(sql, [Date], (err, rows) => {
         if (err) {
             return res.status(500).json({ error: err.message });
@@ -27,15 +34,25 @@ app.post("/tasks", (req, res) => {
         return res.status(400).json({ error: "Required: title and date" });
     }
 
-    const sql = "INSERT INTO task (Title, Date, Color, Note) VALUES (?, ?, ?, ?)";
-    db.run(sql, [Title, Date, Color, Note], function (err) {
+    const sqlTask = "INSERT INTO task (Title, Date) VALUES (?, ?)";
+    db.run(sqlTask, [Title, Date], function (err) {
         if (err) {
             return res.status(500).json({ error: err.message });
         }
 
-        return res.json({
-            message: "Task added",
-            id: this.lastID
+        const taskId = this.lastID;
+
+        const sqlDetails = "INSERT INTO task_details (TaskID, Color, Note) VALUES (?, ?, ?)";
+
+        db.run(sqlDetails, [taskId, Color, Note], function (err) {
+            if (err) {
+                return res.status(500).json({ error: err.message });
+            }
+
+            res.json({
+                message: "Task added",
+                id: taskId
+            });
         });
     });
 });
@@ -43,50 +60,73 @@ app.post("/tasks", (req, res) => {
 
 //"/tasks/:id" odnosi się do jednego konkretnego zadania bo id musi być w url
 app.put("/tasks/:id", (req, res) => {
-    const {id} = req.params;
-    const { Title, Date, Checked, Color, Note} = req.body;
+    const { id } = req.params;
+    const { Title, Date, Checked, Color, Note } = req.body;
 
-    const fields = [];
-    const values = [];
+    const taskFields = [];
+    const taskValues = [];
 
-    if (Title !== undefined) { //sprawdza czy to pole wogule przyszło w zapytaniu
-        fields.push("Title = ?");
-        values.push(Title);
+    const detailsFields = [];
+    const detailsValues = [];
+
+    if (Title !== undefined) {
+        taskFields.push("Title = ?");
+        taskValues.push(Title);
     }
     if (Date !== undefined) {
-        fields.push("Date = ?");
-        values.push(Date);
+        taskFields.push("Date = ?");
+        taskValues.push(Date);
     }
     if (Checked !== undefined) {
-        fields.push("Checked = ?");
-        values.push(Checked);
+        taskFields.push("Checked = ?");
+        taskValues.push(Checked);
     }
     if (Color !== undefined) {
-        fields.push("Color = ?");
-        values.push(Color);
+        detailsFields.push("Color = ?");
+        detailsValues.push(Color);
     }
     if (Note !== undefined) {
-        fields.push("Note = ?");
-        values.push(Note);
+        detailsFields.push("Note = ?");
+        detailsValues.push(Note);
     }
 
-    if (fields.length === 0) {
+    if (taskFields.length === 0 && detailsFields.length === 0) {
         return res.status(400).json({ error: "No data to update" });
     }
-    const sql = `UPDATE task SET ${fields.join(", ")} WHERE ID = ?`; // tu trzeba użyć `bo inaczej lista się nie wypisze
 
-    values.push(id);
+    const finishResponse = () => {
+        res.json({ message: "Task updated" });
+    };
 
-    db.run(sql, values, function (err) {
-        if (err) {
-            return res.status(500).json({ error: err.message });
-        }
-        if (this.changes === 0){ //sprawdza ile wierszy w bazie danych zostało zmienionych, jest to po to jakby się wywołało zadanie które nie istnieje wtedy zwróci błąd
-            return res.status(404).json({ error: "Task not found"});
-        }
+    const updateTask = (callback) => {
+        if (taskFields.length === 0) return callback();
 
-        res.json({message: "Task update"});
-    });
+        const sql = `UPDATE task SET ${taskFields.join(", ")} WHERE ID = ?`;
+        taskValues.push(id);
+
+        db.run(sql, taskValues, function (err) {
+            if (err) return res.status(500).json({ error: err.message });
+            if (this.changes === 0)
+                return res.status(404).json({ error: "Task not found" });
+
+            callback();
+        });
+    };
+
+    const updateDetails = () => {
+        if (detailsFields.length === 0) return finishResponse();
+
+        const sql = `UPDATE task_details SET ${detailsFields.join(", ")} WHERE TaskID = ?`;
+        detailsValues.push(id);
+
+        db.run(sql, detailsValues, function (err) {
+            if (err) return res.status(500).json({ error: err.message });
+
+            finishResponse();
+        });
+    };
+
+    updateTask(updateDetails);
 });
 
 app.delete("/tasks/:id", (req, res) => {

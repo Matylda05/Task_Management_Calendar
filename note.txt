@@ -1,17 +1,13 @@
 CREATE TABLE IF NOT EXISTS task (
-ID INTEGER PRIMARY KEY AUTOINCREMENT,
-Title VARCHAR(100) NOT NULL,
-Date DATE NOT NULL,
-Checked BOOLEAN DEFAULT 0,
-Color VARCHAR(9) DEFAULT '#f9f9f9',
-Note TEXT
+    ID INTEGER PRIMARY KEY AUTOINCREMENT,
+    Title VARCHAR(100) NOT NULL,
+    Date DATE NOT NULL,
+    Checked BOOLEAN DEFAULT 0
 );
 
-INSERT INTO task (Title, Date, Checked, Color, Note)
-VALUES 
-('Urodziny Zuzi', '2026-01-09', 0, '#e25be2', 'Nie zapomnij kupić prezent'),
-('Zakupy', '2026-01-07', 0, '#000000', 'chleb, ser, keczup, pomidor'),
-('Spotkanie o 17.00', '2026-01-10', 0, '#200a80', NULL);
-
-INSERT INTO task (Title, Date, Checked, Note)
-VALUES ('Wyślij Paczke', '2026-01-07', 1, NULL);
+CREATE TABLE IF NOT EXISTS task_details (
+    TaskID INTEGER PRIMARY KEY,
+    Color VARCHAR(9) DEFAULT '#f9f9f9',
+    Note TEXT,
+    FOREIGN KEY (TaskID) REFERENCES task(ID) ON DELETE CASCADE
+);
