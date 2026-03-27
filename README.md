@@ -46,7 +46,7 @@ Celem projektu było stworzenie prostej aplikacji do zarządzania zadaniami z na
   git clone https://github.com/Matylda05/Task_Management_Calendar.git
 2. Przejdź do folderu projektu:
   cd Task_Management_Calendar
-3. Zainstaluj zależności:
+3. Zainstaluj:
   npm install
 4. Uruchom aplikację:
   npm start
