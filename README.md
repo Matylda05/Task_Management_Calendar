@@ -32,12 +32,12 @@ Celem projektu było stworzenie prostej aplikacji do zarządzania zadaniami z na
 ---
 ## Podgląd aplikacji
 
-![App Screenshot](./images/ekran1.png)
-![App Screenshot](./images/ekran2.png)
-![App Screenshot](./images/ekran3.png)
-![App Screenshot](./images/ekran4.png)
-![App Screenshot](./images/ekran5.png)
-![App Screenshot](./images/ekran6.png)
+![App Screenshot](./public/images/ekran1.png)
+![App Screenshot](./public/images/ekran2.png)
+![App Screenshot](./public/images/ekran3.png)
+![App Screenshot](./public/images/ekran4.png)
+![App Screenshot](./public/images/ekran5.png)
+![App Screenshot](./public/images/ekran6.png)
 ---
 
 ## Jak uruchomić projekt
